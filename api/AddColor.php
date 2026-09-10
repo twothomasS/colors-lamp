@@ -19,7 +19,12 @@
 	} 
 	else
 	{
-    
+    	$stmt = $conn->prepare("INSERT into Colors (UserId,Name) VALUES(?,?)");
+		$stmt->bind_param("ss", $userId, $color);
+		$stmt->execute();
+		$stmt->close();
+		$conn->close();
+		returnWithError("");
   	}
   
   	function getRequestInfo()
