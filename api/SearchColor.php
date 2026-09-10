@@ -19,6 +19,27 @@
 		$stmt->execute();
 		
 		$result = $stmt->get_result();
+		while($row = $result->fetch_assoc())
+		{
+			if( $searchCount > 0 )
+			{
+				$searchResults .= ",";
+			}
+			$searchCount++;
+			$searchResults .= '"' . $row["Name"] . '"';
+		}
+		
+		if( $searchCount == 0 )
+		{
+			returnWithError( "No Records Found" );
+		}
+		else
+		{
+			returnWithInfo( $searchResults );
+		}
+		
+		$stmt->close();
+		$conn->close();
   	}
 
 	function getRequestInfo()
