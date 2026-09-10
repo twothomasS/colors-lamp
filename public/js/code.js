@@ -1,9 +1,11 @@
-const urlBase = 'http:YOURDOMAIN/api'; //CHANGE TO THE DOMAIN NAME OF YOUR WEBSITE
+const urlBase = 'http:YOURDOMAIN/api'; //CHANGE TO THE DOMAIN NAME OF YOUR WEBSITE, and link to API folder if you change the layout of this repo on your folder
 const extension = 'php';
 
 let userId = 0;
 let firstName = "";
 let lastName = "";
+
+
 function doLogin()
 {
 	userId = 0;
@@ -56,6 +58,16 @@ function doLogin()
 	}
 
 }
+
+function doLogout()
+{
+	userId = 0;
+	firstName = "";
+	lastName = "";
+	document.cookie = "firstName= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+	window.location.href = "index.html";
+}
+
 function saveCookie()
 {
 	let minutes = 20;
