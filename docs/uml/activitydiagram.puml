@@ -1,0 +1,28 @@
+@startuml
+
+start
+
+partition "Authenticate" {
+    :Login;
+
+    while (Valid?) is (No)
+        :Login;
+    endwhile (Yes)
+
+    :Create Session;
+}
+
+partition "Colors Application" {
+    while (Action) is (Interact)
+        switch (Options)
+        case (Add)
+            :Create;
+        case (Search)
+            :Query;
+        endswitch
+    endwhile (Logout)
+}
+
+stop
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class User {
+  - ID: int
+  - FirstName: String
+  - LastName: String
+  - Login: String
+  - Password: String
+  + login(): boolean
+  + getColors(): List
+  + createColor(name: String): Color
+  + searchColors(query: String): List
+}
+
+class Color {
+  - ID: int
+  - Name: String
+  - UserID: int
+  + getName(): String
+  + getOwner(): User
+}
+
+class AuthController {
+  + authenticate(login: String, password: String): boolean
+}
+
+class ColorController {
+  + createColor(name: String, userID: int): Color
+  + searchColors(query: String): List
+}
+
+class UsersTable <<database table>>
+class ColorsTable <<database table>>
+
+AuthController ..> User : authenticates
+ColorController ..> Color : manages
+User ..> ColorController  : Uses
+
+User ..> Color : Views
+
+User ..> UsersTable  : Resides In
+Color ..> ColorsTable  : Resides In
+
+@enduml
