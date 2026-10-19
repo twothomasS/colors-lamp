@@ -1,5 +1,5 @@
 # COP4331 Colors Project Application
-This repository is the code base for a Colors Application for the COP4331 at the University of Central Florida
+This repository is the code base for a Colors Application for COP4331 at the University of Central Florida
 It is a web application where a user logs into their account, and can create colors and then search for said colors.
 
 
@@ -86,7 +86,7 @@ To run the application, simply go to your ip or domain. Login with a username an
 
 # Assumption, Limitation, and AI usage.
 
-This application is designed for an into assignment for a college class and is therefore simple by nature. 
+This application is designed for an intro assignment for a college class and is therefore simple by nature. 
 
 No artificial intelligence was used in any aspect of this repository.
 
