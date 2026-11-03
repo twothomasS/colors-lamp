@@ -1,3 +1,5 @@
+/* exported doLogin, doLogout, searchColor, addColor, readCookie */
+//Above comment is for the linter to ignore the functions not being used because they are used in the HTML files
 
 const urlBase = 'http:YOURDOMAIN/api'; // CHANGE TO YOUR WEBSITE DOMAIN
 const extension = 'php';
