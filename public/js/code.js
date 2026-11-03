@@ -1,6 +1,3 @@
-/* exported doLogin, doLogout, searchColor, addColor, readCookie */
-//Above comment is for the linter to ignore the functions not being used because they are used in the HTML files
-
 const urlBase = 'http:YOURDOMAIN/api'; // CHANGE TO YOUR WEBSITE DOMAIN
 const extension = 'php';
 
@@ -8,16 +5,18 @@ let userId = 0;
 let firstName = "";
 let lastName = "";
 
+// Called from the HTML login button
+// eslint-disable-next-line no-unused-vars
 function doLogin()
 {
     userId = 0;
     firstName = "";
     lastName = "";
 
-    let login = document.getElementById("loginName").value;
-    let password = document.getElementById("loginPassword").value;
+    let login = document.getElementById("login-name").value;
+    let password = document.getElementById("login-password").value;
 
-    document.getElementById("loginResult").innerHTML = "";
+    document.getElementById("login-result").innerHTML = "";
 
     let tmp = { login: login, password: password };
     let jsonPayload = JSON.stringify(tmp);
@@ -39,7 +38,8 @@ function doLogin()
 
                 if (userId < 1)
                 {
-                    document.getElementById("loginResult").innerHTML = "User/Password combination incorrect";
+                    document.getElementById("login-result").innerHTML =
+                        "User/Password combination incorrect";
                     return;
                 }
 
@@ -56,10 +56,12 @@ function doLogin()
     }
     catch(err)
     {
-        document.getElementById("loginResult").innerHTML = err.message;
+        document.getElementById("login-result").innerHTML = err.message;
     }
 }
 
+// Called from the HTML logout button
+// eslint-disable-next-line no-unused-vars
 function doLogout()
 {
     userId = 0;
@@ -76,9 +78,14 @@ function saveCookie()
     let date = new Date();
     date.setTime(date.getTime() + (minutes * 60 * 1000));
 
-    document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId + ";expires=" + date.toGMTString();
+    document.cookie = "firstName=" + firstName +
+        ",lastName=" + lastName +
+        ",userId=" + userId +
+        ";expires=" + date.toGMTString();
 }
 
+// Called from the HTML color page
+// eslint-disable-next-line no-unused-vars
 function readCookie()
 {
     userId = -1;
@@ -86,7 +93,7 @@ function readCookie()
     let data = document.cookie;
     let splits = data.split(",");
 
-    for (var i = 0; i < splits.length; i++)
+    for (let i = 0; i < splits.length; i++)
     {
         let thisOne = splits[i].trim();
         let tokens = thisOne.split("=");
@@ -120,6 +127,8 @@ function readCookie()
     }
 }
 
+// Called from the HTML add-color button
+// eslint-disable-next-line no-unused-vars
 function addColor()
 {
     let newColor = document.getElementById("color-text").value;
@@ -141,7 +150,8 @@ function addColor()
         {
             if (this.readyState == 4 && this.status == 200)
             {
-                document.getElementById("color-add-result").innerHTML = "Color has been added";
+                document.getElementById("color-add-result").innerHTML =
+                    "Color has been added";
             }
         };
 
@@ -153,6 +163,8 @@ function addColor()
     }
 }
 
+// Called from the HTML search-color button
+// eslint-disable-next-line no-unused-vars
 function searchColor()
 {
     let srch = document.getElementById("search-text").value;
@@ -176,7 +188,8 @@ function searchColor()
         {
             if (this.readyState == 4 && this.status == 200)
             {
-                document.getElementById("color-search-result").innerHTML = "Color(s) has been retrieved";
+                document.getElementById("color-search-result").innerHTML =
+                    "Color(s) has been retrieved";
 
                 let jsonObject = JSON.parse(xhr.responseText);
 
