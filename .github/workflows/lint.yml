@@ -3,9 +3,8 @@ name: Super-Linter
 
 on:
   push:
-    branches: [main, code_linting]
-  pull_request:
-    branches: [main]
+    branches:
+      - code_linting
   workflow_dispatch:
 
 permissions:
