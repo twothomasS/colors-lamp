@@ -3,7 +3,7 @@ name: Super-Linter
 
 on:
   push:
-    branches: [main, setup-github-actions]
+    branches: [main, code_linting]
   pull_request:
     branches: [main]
   workflow_dispatch:
