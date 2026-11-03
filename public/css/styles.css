@@ -31,7 +31,7 @@ body
     background-color: #b2b2b2;
 }
 
-#access-uID-iv
+#access-u-id-iv
 {
     font-size: 30px;
     width: 70%;
@@ -59,14 +59,17 @@ body
 {
 	font-size: 30px;
 }
+
 #login-password
 {
 	font-size: 30px;
 }
+
 #search-text
 {
 	font-size: 30px;
 }
+
 #color-text
 {
 	font-size: 30px;
