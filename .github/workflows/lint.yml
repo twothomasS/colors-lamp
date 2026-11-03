@@ -26,11 +26,19 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Check every file in the repository
           VALIDATE_ALL_CODEBASE: true
-          VALIDATE_PHP: true
+
+          # PHP linting
+          VALIDATE_PHP_BUILTIN: true
+
+          # JavaScript linting
+          VALIDATE_JAVASCRIPT_ES: true
+
+          # Other LAMP stack validators
           VALIDATE_HTML: true
           VALIDATE_CSS: true
-          VALIDATE_JAVASCRIPT: true
           VALIDATE_SQL: true
           VALIDATE_JSON: true
           VALIDATE_YAML: true
