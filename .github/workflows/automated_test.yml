@@ -119,7 +119,7 @@ jobs:
         run: |
           php -l api/AddColor.php
           php -l api/Login.php
-          php -l api/SearchColors.php
+          php -l api/SearchColor.php
           php -l tests/router.php
 
       # --------------------------------
