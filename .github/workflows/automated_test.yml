@@ -1,0 +1,199 @@
+
+name: Automated Testing
+
+on:
+  push:
+    branches:
+      - automated-testing
+
+  pull_request:
+    branches:
+      - automated-testing
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  # --------------------------------
+  # JOB 1: CODE QUALITY
+  # --------------------------------
+  lint:
+    name: Super-Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Super-Linter
+        uses: super-linter/super-linter@v8
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          VALIDATE_ALL_CODEBASE: true
+
+          VALIDATE_PHP_BUILTIN: true
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_HTML: true
+          VALIDATE_CSS: true
+          VALIDATE_SQL: true
+          VALIDATE_JSON: true
+          VALIDATE_YAML: true
+          VALIDATE_MARKDOWN: true
+
+  # --------------------------------
+  # JOB 2: FRONTEND TESTS
+  # --------------------------------
+  frontend-tests:
+    name: Jest Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run frontend tests
+        run: npm run test:frontend -- --passWithNoTests
+
+  # --------------------------------
+  # JOB 3: PHP AND MYSQL INTEGRATION
+  # --------------------------------
+  integration-tests:
+    name: PHP and MySQL Integration Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: app_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+
+        ports:
+          - 3306:3306
+
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mysqli, pdo_mysql
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      # Create a temporary database configuration
+      - name: Configure test database
+        working-directory: api
+        run: |
+          cat > key.json <<'EOF'
+          {
+            "host": "127.0.0.1",
+            "user": "test_user",
+            "password": "test_password",
+            "db": "app_test"
+          }
+          EOF
+
+      # Create test database tables and seed a test user
+      - name: Initialize test database
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot app_test <<'SQL'
+
+          CREATE TABLE Users (
+            ID INT AUTO_INCREMENT PRIMARY KEY,
+            firstName VARCHAR(100) NOT NULL,
+            lastName VARCHAR(100) NOT NULL,
+            Login VARCHAR(100) NOT NULL UNIQUE,
+            Password VARCHAR(255) NOT NULL
+          );
+
+          CREATE TABLE Colors (
+            ID INT AUTO_INCREMENT PRIMARY KEY,
+            UserId INT NOT NULL,
+            Name VARCHAR(255) NOT NULL,
+            FOREIGN KEY (UserId) REFERENCES Users(ID)
+          );
+
+          INSERT INTO Users (ID, firstName, lastName, Login, Password)
+          VALUES (
+            1,
+            'Jest',
+            'Tester',
+            'jest_test_user',
+            'jest_test_password'
+          );
+
+          SQL
+
+      # Start the PHP application with the API router
+      - name: Start PHP test server
+        run: |
+          php -S 127.0.0.1:8000 \
+            -t public \
+            tests/router.php \
+            > /tmp/php-server.log 2>&1 &
+
+      - name: Wait for PHP server
+        run: |
+          for i in {1..30}; do
+            if curl -sS http://127.0.0.1:8000/ \
+              -o /dev/null; then
+              echo "PHP server is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          cat /tmp/php-server.log
+          exit 1
+
+      # Run actual API integration tests
+      - name: Run Jest integration tests
+        run: npm run test:integration
+        env:
+          API_BASE_URL: http://127.0.0.1:8000
+
+      - name: Display PHP server logs on failure
+        if: failure()
+        run: cat /tmp/php-server.log
+
