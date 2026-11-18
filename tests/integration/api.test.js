@@ -1,4 +1,10 @@
 
+/**
+ * @jest-environment node
+ */
+
+const http = require('node:http');
+
 const API_BASE_URL =
   process.env.API_BASE_URL || 'http://127.0.0.1:8000';
 
@@ -7,23 +13,59 @@ const TEST_LOGIN = 'jest_test_user';
 const TEST_PASSWORD = 'jest_test_password';
 const TEST_COLOR = 'CI Test Blue';
 
+// Send JSON POST requests to the PHP API
 async function post(endpoint, data) {
-  const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
+  const url = new URL(`/api/${endpoint}`, API_BASE_URL);
+
+  const body = JSON.stringify(data);
+
+  return new Promise((resolve, reject) => {
+    const request = http.request(
+      {
+        hostname: url.hostname,
+        port: url.port || 80,
+        path: url.pathname,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body)
+        }
+      },
+      (response) => {
+        let responseData = '';
+
+        response.on('data', chunk => {
+          responseData += chunk;
+        });
+
+        response.on('end', () => {
+          if (
+            response.statusCode < 200 ||
+            response.statusCode >= 300
+          ) {
+            return reject(
+              new Error(`HTTP error: ${response.statusCode}`)
+            );
+          }
+
+          try {
+            resolve(JSON.parse(responseData));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+    );
+
+    request.on('error', reject);
+
+    request.write(body);
+    request.end();
   });
-
-  expect(response.ok).toBe(true);
-
-  return response.json();
 }
 
 describe('Colors LAMP API Integration Tests', () => {
 
-  // TEST 1: ADD COLOR
   test('AddColor.php - successfully adds a color', async () => {
     const result = await post('AddColor.php', {
       color: TEST_COLOR,
@@ -35,7 +77,6 @@ describe('Colors LAMP API Integration Tests', () => {
     });
   });
 
-  // TEST 2: LOGIN
   test('Login.php - successfully authenticates a user', async () => {
     const result = await post('Login.php', {
       login: TEST_LOGIN,
@@ -48,10 +89,9 @@ describe('Colors LAMP API Integration Tests', () => {
     expect(result.lastName).toBe('Tester');
   });
 
-  // TEST 3: SEARCH COLORS
   test('SearchColors.php - finds the newly added color', async () => {
     const result = await post('SearchColors.php', {
-      search: 'CI Test Blue',
+      search: TEST_COLOR,
       userId: TEST_USER_ID
     });
 
@@ -59,7 +99,6 @@ describe('Colors LAMP API Integration Tests', () => {
     expect(result.results).toContain(TEST_COLOR);
   });
 
-  // TEST 4: INVALID LOGIN
   test('Login.php - rejects invalid credentials', async () => {
     const result = await post('Login.php', {
       login: TEST_LOGIN,
@@ -70,7 +109,6 @@ describe('Colors LAMP API Integration Tests', () => {
     expect(result.error).toBe('No Records Found');
   });
 
-  // TEST 5: SEARCH WITH NO MATCHES
   test('SearchColors.php - returns an error when no colors match', async () => {
     const result = await post('SearchColors.php', {
       search: 'DefinitelyNotARealColor123',
