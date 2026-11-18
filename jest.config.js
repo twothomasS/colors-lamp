@@ -1,13 +1,21 @@
 
 module.exports = {
-  testEnvironment: 'node',
+    testEnvironment: 'jsdom',
 
-  testMatch: [
-    '<rootDir>/tests/frontend/**/*.test.js',
-    '<rootDir>/tests/integration/**/*.test.js'
-  ],
+    testEnvironmentOptions: {
+        url: 'http://localhost/'
+    },
 
-  clearMocks: true,
+    roots: [
+        '<rootDir>/tests'
+    ],
 
-  verbose: true
+    testMatch: [
+        '**/frontend/**/*.test.js',
+        '**/integration/**/*.test.js'
+    ],
+
+    clearMocks: true,
+
+    verbose: true
 };
