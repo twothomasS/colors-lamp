@@ -214,3 +214,14 @@ function searchColor()
         document.getElementById("color-search-result").innerHTML = err.message;
     }
 }
+// Export functions for Jest testing (does not affect browser usage)
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = {
+        doLogin,
+        doLogout,
+        readCookie,
+        saveCookie,
+        addColor,
+        searchColor
+    };
+}
