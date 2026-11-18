@@ -93,8 +93,8 @@ describe('Colors LAMP API Integration Tests', () => {
     expect(result.lastName).toBe('Tester');
   });
 
-  test('SearchColors.php - finds the newly added color', async () => {
-    const result = await post('SearchColors.php', {
+  test('SearchColor.php - finds the newly added color', async () => {
+    const result = await post('SearchColor.php', {
       search: TEST_COLOR,
       userId: TEST_USER_ID
     });
@@ -113,8 +113,8 @@ describe('Colors LAMP API Integration Tests', () => {
     expect(result.error).toBe('No Records Found');
   });
 
-  test('SearchColors.php - returns an error when no colors match', async () => {
-    const result = await post('SearchColors.php', {
+  test('SearchColor.php - returns an error when no colors match', async () => {
+    const result = await post('SearchColor.php', {
       search: 'DefinitelyNotARealColor123',
       userId: TEST_USER_ID
     });
