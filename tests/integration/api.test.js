@@ -40,12 +40,16 @@ async function post(endpoint, data) {
 
         response.on('end', () => {
           if (
-            response.statusCode < 200 ||
-            response.statusCode >= 300
-          ) {
-            return reject(
-              new Error(`HTTP error: ${response.statusCode}`)
-            );
+              response.statusCode < 200 ||
+              response.statusCode >= 300
+            ) {
+              return reject(
+                new Error(
+                  `HTTP error: ${response.statusCode}\n` +
+                  `Response: ${responseData}`
+                )
+              );
+
           }
 
           try {
