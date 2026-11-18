@@ -6,7 +6,7 @@ $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $routes = [
     '/api/AddColor.php' => 'AddColor.php',
     '/api/Login.php' => 'Login.php',
-    '/api/SearchColors.php' => 'SearchColor.php'
+    '/api/SearchColor.php' => 'SearchColor.php'
 ];
 
 if (isset($routes[$path])) {
