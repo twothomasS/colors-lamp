@@ -6,9 +6,7 @@
 
 const {
     doLogin,
-    doLogout,
     readCookie,
-    saveCookie,
     addColor,
     searchColor
 } = require('../../public/js/code.js');
