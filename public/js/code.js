@@ -1,4 +1,4 @@
-const urlBase = 'http:YOURDOMAIN/api'; // CHANGE TO YOUR WEBSITE DOMAIN
+const urlBase = '/api'; // CHANGE TO YOUR WEBSITE DOMAIN
 const extension = 'php';
 
 let userId = 0;
