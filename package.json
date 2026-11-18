@@ -1,0 +1,20 @@
+
+{
+  "name": "colors-lamp",
+  "version": "1.0.0",
+  "description": "Colors LAMP application with automated frontend and API integration testing",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "test:frontend": "jest tests/frontend",
+    "test:integration": "jest tests/integration --runInBand",
+    "test:all": "jest --runInBand"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/user-event": "^14.6.1",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0"
+  }
+}
