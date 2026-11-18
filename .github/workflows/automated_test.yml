@@ -105,6 +105,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --------------------------------
+      # PHP SETUP
+      # --------------------------------
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -112,6 +115,16 @@ jobs:
           extensions: mysqli, pdo_mysql
           coverage: none
 
+      - name: Check PHP files
+        run: |
+          php -l api/AddColor.php
+          php -l api/Login.php
+          php -l api/SearchColors.php
+          php -l tests/router.php
+
+      # --------------------------------
+      # NODE SETUP
+      # --------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -121,7 +134,9 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      # Create a temporary database configuration
+      # --------------------------------
+      # DATABASE CONFIGURATION
+      # --------------------------------
       - name: Configure test database
         working-directory: api
         run: |
@@ -134,7 +149,8 @@ jobs:
           }
           EOF
 
-      # Create test database tables and seed a test user
+          echo "Test database configuration created."
+
       - name: Initialize test database
         run: |
           mysql -h 127.0.0.1 -P 3306 -uroot -proot app_test <<'SQL'
@@ -165,35 +181,82 @@ jobs:
 
           SQL
 
-      # Start the PHP application with the API router
+          echo "Test database initialized."
+
+      # --------------------------------
+      # VERIFY API CONFIGURATION
+      # --------------------------------
+      - name: Verify API files
+        run: |
+          test -f api/key.json
+          test -f api/SearchColors.php
+          test -f api/AddColor.php
+          test -f api/Login.php
+          test -f tests/router.php
+
+          echo "All API files are present."
+
+      # --------------------------------
+      # START PHP SERVER WITH DEBUGGING
+      # --------------------------------
       - name: Start PHP test server
         run: |
-          php -S 127.0.0.1:8000 \
+          php \
+            -d display_errors=1 \
+            -d display_startup_errors=1 \
+            -d log_errors=1 \
+            -d error_reporting=-1 \
+            -d error_log=/tmp/php-errors.log \
+            -S 127.0.0.1:8000 \
             -t public \
             tests/router.php \
             > /tmp/php-server.log 2>&1 &
 
+          echo $! > /tmp/php-server.pid
+
+      # --------------------------------
+      # WAIT FOR PHP SERVER
+      # --------------------------------
       - name: Wait for PHP server
         run: |
           for i in {1..30}; do
             if curl -sS http://127.0.0.1:8000/ \
               -o /dev/null; then
-              echo "PHP server is ready"
+              echo "PHP server is ready."
               exit 0
             fi
+
             sleep 2
           done
 
+          echo "PHP server failed to start."
           cat /tmp/php-server.log
+          cat /tmp/php-errors.log 2>/dev/null || true
           exit 1
 
-      # Run actual API integration tests
+      # --------------------------------
+      # RUN API INTEGRATION TESTS
+      # --------------------------------
       - name: Run Jest integration tests
         run: npm run test:integration
         env:
           API_BASE_URL: http://127.0.0.1:8000
 
+      # --------------------------------
+      # DISPLAY PHP ERRORS ON FAILURE
+      # --------------------------------
       - name: Display PHP server logs on failure
         if: failure()
-        run: cat /tmp/php-server.log
+        run: |
+          echo "=================================="
+          echo "PHP SERVER LOGS"
+          echo "=================================="
 
+          cat /tmp/php-server.log 2>/dev/null || true
+
+          echo ""
+          echo "=================================="
+          echo "PHP ERROR LOGS"
+          echo "=================================="
+
+          cat /tmp/php-errors.log 2>/dev/null || true
