@@ -186,6 +186,17 @@ jobs:
       # --------------------------------
       # VERIFY API CONFIGURATION
       # --------------------------------
+      - name: Create database configuration
+        run: |
+          mkdir -p api
+          cat > api/key.json <<'EOF'
+          {
+            "host": "127.0.0.1",
+            "user": "test_user",
+            "password": "test_password",
+            "db": "app_test"
+          }
+          EOF
       - name: Verify API files
         run: |
           test -f api/key.json
