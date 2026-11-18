@@ -278,7 +278,7 @@ describe('Colors LAMP Frontend Tests', () => {
             searchColor();
 
             expect(xhr.method).toBe('POST');
-            expect(xhr.url).toBe('/api/SearchColors.php');
+            expect(xhr.url).toBe('/api/SearchColor.php');
 
             expect(JSON.parse(xhr.body)).toEqual({
                 search: 'Blue',
@@ -344,7 +344,7 @@ describe('Colors LAMP Frontend Tests', () => {
             // Your current PHP API returns an error without a results array.
             // The frontend currently assumes results always exists.
             // This test documents the current expected API behavior.
-            expect(xhr.url).toBe('/api/SearchColors.php');
+            expect(xhr.url).toBe('/api/SearchColor.php');
         });
 
     });
