@@ -178,7 +178,7 @@ function searchColor()
     let tmp = { search: srch, userId: userId };
     let jsonPayload = JSON.stringify(tmp);
 
-    let url = urlBase + '/SearchColors.' + extension;
+    let url = urlBase + '/SearchColor.' + extension;
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
