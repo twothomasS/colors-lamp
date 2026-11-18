@@ -4,10 +4,12 @@ name: Automated Testing
 on:
   push:
     branches:
+      - main
       - automated-testing
 
   pull_request:
     branches:
+      - main
       - automated-testing
     types:
       - opened
