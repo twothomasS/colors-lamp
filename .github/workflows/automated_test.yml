@@ -114,7 +114,7 @@ jobs:
         run: |
           php -l api/AddColor.php
           php -l api/Login.php
-          php -l api/searchColor.php
+          php -l api/SearchColor.php
           php -l tests/router.php
 
       # --------------------------------
@@ -188,7 +188,7 @@ jobs:
       - name: Verify API files
         run: |
           test -f api/key.json
-          test -f api/searchColor.php
+          test -f api/SearchColor.php
           test -f api/AddColor.php
           test -f api/Login.php
           test -f tests/router.php
