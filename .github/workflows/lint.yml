@@ -4,7 +4,7 @@ name: Super-Linter
 on:
   push:
     branches:
-      - code_linting
+      - automated-testing
   workflow_dispatch:
 
 permissions:
