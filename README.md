@@ -2,6 +2,13 @@
 
 This repository contains the codebase for a Colors Application created for COP4331 at the University of Central Florida (UCF).
 
+All branches are a different assignment and are not merged into main.
+
+All Core Files are mostly provided by the class. The purpose of the assignment was to get used to:
+- Set up a LAMP stack
+- Practice UML diagraming
+- Implement Github automated linting and testing
+
 The application allows users to log in to their accounts, create colors, and search for colors they have added.
 
 ## Technologies

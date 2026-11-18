@@ -1,9 +1,11 @@
-const urlBase = 'http:YOURDOMAIN/api'; // CHANGE TO YOUR WEBSITE DOMAIN
+const urlBase = '/api'; // CHANGE TO YOUR WEBSITE DOMAIN
 const extension = 'php';
 
 let userId = 0;
 let firstName = "";
 let lastName = "";
+//A lot of functions have eslint diable directive
+//this is because they are called by external files, so without them the lint will throw an error for a non error
 
 // Called from the HTML login button
 // eslint-disable-next-line no-unused-vars
@@ -176,7 +178,7 @@ function searchColor()
     let tmp = { search: srch, userId: userId };
     let jsonPayload = JSON.stringify(tmp);
 
-    let url = urlBase + '/SearchColors.' + extension;
+    let url = urlBase + '/SearchColor.' + extension;
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -213,4 +215,16 @@ function searchColor()
     {
         document.getElementById("color-search-result").innerHTML = err.message;
     }
+}
+// Export functions for Jest testing (does not affect browser usage)
+// eslint-disable-next-line no-unused-vars
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = {
+        doLogin,
+        doLogout,
+        readCookie,
+        saveCookie,
+        addColor,
+        searchColor
+    };
 }
